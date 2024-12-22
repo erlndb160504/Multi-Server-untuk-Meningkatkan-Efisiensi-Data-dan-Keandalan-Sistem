@@ -1,0 +1,54 @@
+#DNS PRIMARY
+$ sudo apt update
+$ sudo apt install -y bind9
+
+# KONFIGURASI PRIMARY DNS 
+$ sudo nano /etc/bind/named.conf.local
+Isi nano:
+zone "ass.com" {
+    type master;
+    file "/etc/bind/db.ass.com";
+};
+
+# Membuat Zone File
+$ mkdir /etc/bind/zones
+$ nano /etc/bind/zones/db.ass.com
+
+Isi: 
+$TTL 604800
+@   IN  SOA ns1.ass.com. admin.ass.com. (
+        2023122001 ; Serial
+        604800     ; Refresh
+        86400      ; Retry
+        2419200    ; Expire
+        604800 )   ; Negative Cache TTL
+
+; Nameservers
+@   IN  NS  ns1.ass.com.
+
+; A records
+ns1 IN  A   172.31.46.161
+ns2 IN  A   172.31.38.182
+web IN  A   172.31.83.169
+lb IN   A   172.31.19.83
+db  IN  A   172.31.87.188
+
+$ sudo systemctl restart bind9
+
+#DNS SECONDARY
+$ sudo apt update
+$ sudo apt install -y bind9
+
+# KONFIGURASI PRIMARY DNS
+
+$ sudo nano /etc/bind/named.conf.local
+Isi nano:
+zone "ass.com" {
+    type slave;
+    masters { 172.31.46.161; };
+    file "/var/cache/bind/db.ass.com";
+};
+
+$ sudo systemctl restart bind9
+
+

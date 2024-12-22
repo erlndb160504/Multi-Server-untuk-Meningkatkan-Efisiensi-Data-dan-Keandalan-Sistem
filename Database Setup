@@ -1,0 +1,19 @@
+# Database MariaDB
+#Update dan Upgrade Package pada Instance
+$ sudo apt update 
+$ sudo apt install mariadb-server -y
+
+# instalasi keamanan pada database
+$ sudo mysql_secure_installation
+
+# Pembuatan Database dan User Nextcloud
+$ Sudo mysql
+> CREATE DATABASE nextcloud;
+> CREATE USER 'nextclouduser'@'%' IDENTIFIED BY '123ass';
+> GRANT ALL PRIVILEGES ON nextcloud.* TO 'nextclouduser'@'%';
+> FLUSH PRIVILEGES;
+
+# Pengaturan Akses
+$ sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf
+* Ubah bind-address = 0.0.0.0
+

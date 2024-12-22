@@ -1,0 +1,23 @@
+# SETUP HAProxy
+$ sudo apt update
+$ sudo apt install haproxy -y
+
+
+# KONFIGURASI HAProxy untuk 2 WebServer 
+$ sudo nano /etc/haproxy/haproxy.cfg
+Tambahkan isi nano:
+frontend http_front
+    bind *:80
+    default_backend http_back
+
+backend http_back
+    balance leastconn
+    http-check send meth GET uri /some/path ver HTTP/1.1
+    http-check send hdr Host ass.com
+    server nextcloud1 172.31.83.169:80 check inter 5s rise 2 fall 3
+    server nextcloud2 172.31.44.47:80 check inter 5s rise 2 fall 3
+
+$ sudo systemctl restart bind9
+
+# Stress Testing/Benchmarking Server Web
+$ ab -n 100 -c 10 http://IP-PUBLIK-HAPROXY:80/
